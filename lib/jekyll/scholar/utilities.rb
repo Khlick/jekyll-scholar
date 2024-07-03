@@ -809,12 +809,30 @@ module Jekyll
         end
       end
 
+      # KG Update: Liquid 5 removed values_at. Since we know the keys, let's just grab them individually
       def set_context_to(context)
-        @context, @site, page, = context, *context.registers.values_at(:site, :page)
-        config.merge!(site.config['scholar'] || {})
+        # Assign the context to an instance variable
+        @context = context
+      
+        # Extract the site and page objects from the context registers using symbols
+        @site = context.registers[:site]
+        page = context.registers[:page]
+      
+        # Merge the scholar configuration from the site and page into the config
+        config.merge!(@site.config['scholar'] || {})
         config.merge!(page['scholar'] || {})
+      
+        # Return self for method chaining
         self
       end
+      
+      # def set_context_to(context)
+      #   @context, @site, page, = context, *context.registers.values_at(:site, :page)
+      #   config.merge!(site.config['scholar'] || {})
+      #   config.merge!(page['scholar'] || {})
+      #   self
+      # end
+
 
       def load_style(uri)
         begin
